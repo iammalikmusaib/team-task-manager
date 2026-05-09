@@ -183,14 +183,6 @@ Frontend service:
 4. Output directory:
    - `dist`
 
-## Screenshots
-
-Add screenshots after deployment:
-- `docs/screenshots/login.png`
-- `docs/screenshots/dashboard.png`
-- `docs/screenshots/tasks-kanban.png`
-- `docs/screenshots/project-detail.png`
-
 ## Notes
 
 - The backend intentionally adds a task assignee to the selected project members if they are not already present.
