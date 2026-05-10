@@ -1,5 +1,6 @@
 import cors from 'cors';
 import express from 'express';
+import fs from 'fs';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -43,12 +44,14 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
 const clientDistPath = path.resolve(__dirname, '../../client/dist');
+const clientIndexPath = path.join(clientDistPath, 'index.html');
+const canServeClient = fs.existsSync(clientIndexPath);
 
-if (env.NODE_ENV === 'production') {
+if (canServeClient) {
   app.use(express.static(clientDistPath));
   app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) return next();
-    return res.sendFile(path.join(clientDistPath, 'index.html'));
+    return res.sendFile(clientIndexPath);
   });
 }
 
