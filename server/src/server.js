@@ -4,11 +4,17 @@ import { connectDB } from './config/db.js';
 
 const DEFAULT_PORT = env.PORT;
 const MAX_PORT_ATTEMPTS = env.NODE_ENV === 'production' ? 1 : 10;
+const HOST = env.NODE_ENV === 'production' ? '0.0.0.0' : undefined;
 
 const listen = (port, attemptsLeft = MAX_PORT_ATTEMPTS) => {
-  const server = app.listen(port, () => {
-    console.log(`App running at http://localhost:${port}`);
-    console.log(`API health: http://localhost:${port}/api/health`);
+  const server = app.listen(port, HOST, () => {
+    const localUrl = `http://localhost:${port}`;
+    const publicUrl = env.PUBLIC_APP_URL || localUrl;
+
+    console.log(`App listening on port ${port}`);
+    console.log(`Local URL: ${localUrl}`);
+    console.log(`Public URL: ${publicUrl}`);
+    console.log(`API health: ${publicUrl}/api/health`);
   });
 
   server.on('error', (error) => {
