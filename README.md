@@ -16,7 +16,7 @@ A production-ready full-stack Team Task Manager built with React, Vite, Tailwind
 - Responsive SaaS-style UI with sidebar navigation and dark/light theme
 - Backend validation, protected APIs, CORS, bcrypt password hashing, and environment-based config
 - Optional SMTP configuration for password reset email delivery
-- Railway-compatible backend configuration
+- Railway-compatible single-service deployment configuration
 
 ## Tech Stack
 
@@ -151,7 +151,7 @@ Tasks:
 - `POST /api/tasks` Admin
 - `GET /api/tasks`
 - `GET /api/tasks/:id`
-- `PUT /api/tasks/:id` Admin can edit all fields, Member can update assigned task status
+- `PUT /api/tasks/:id` Admin can edit all fields, Member can update assigned task status and progress
 - `DELETE /api/tasks/:id` Admin
 
 Dashboard:
@@ -159,32 +159,50 @@ Dashboard:
 
 ## Railway Deployment
 
-Backend service:
+This app is configured as one Railway service from the repository root. Express serves the API and the built React app from `client/dist`.
 
 1. Create a new Railway project.
-2. Add a MongoDB Atlas connection string in the backend service variables:
-   - `NODE_ENV=production`
-   - `MONGO_URI=...`
-   - `JWT_SECRET=...`
-   - `JWT_EXPIRES_IN=7d`
-   - `CLIENT_URL=https://your-frontend-domain.com`
-   - Optional SMTP variables for password reset email
-3. Set the service root directory to `server`.
-4. Railway will use `server/railway.json` and run `npm start`.
-5. Confirm `https://your-backend-domain.railway.app/api/health` returns `ok`.
+2. Choose `Deploy from GitHub repo`.
+3. Select `iammalikmusaib/team-task-manager`.
+4. Keep the root directory as the repository root.
+5. Add variables:
 
-Frontend service:
+```env
+NODE_ENV=production
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/team-task-manager?retryWrites=true&w=majority
+JWT_SECRET=replace-with-a-long-random-secret
+JWT_EXPIRES_IN=7d
+CLIENT_URL=https://your-railway-domain.up.railway.app
+```
 
-1. Deploy `client` as a static Vite app on Railway or another static host.
-2. Set:
-   - `VITE_API_URL=https://your-backend-domain.railway.app/api`
-3. Build command:
-   - `npm run build`
-4. Output directory:
-   - `dist`
+Optional SMTP variables:
+
+```env
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM="Team Task Manager <no-reply@example.com>"
+```
+
+Railway uses `railway.json`:
+
+```bash
+npm install
+npm run build
+npm start
+```
+
+Do not run `node dist/index.js`; this project is not a compiled backend. The backend entrypoint is `server/src/server.js`, and the root `npm start` script starts it.
+
+After deploy, confirm:
+
+```txt
+https://your-railway-domain.up.railway.app/api/health
+```
 
 ## Notes
 
 - The backend intentionally adds a task assignee to the selected project members if they are not already present.
-- Members can drag their assigned tasks between statuses; the backend ignores unauthorized field edits for member updates.
+- Members can drag their assigned tasks between statuses and update progress on assigned work.
 - Admins control project/task creation, assignment, editing, and deletion.
