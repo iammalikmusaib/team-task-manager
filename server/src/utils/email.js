@@ -1,10 +1,9 @@
 import nodemailer from 'nodemailer';
+import { env } from '../config/env.js';
 
 export const sendPasswordResetEmail = async ({ to, resetUrl }) => {
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM } = process.env;
-
-  if (!SMTP_HOST || !SMTP_USER || !SMTP_PASS) {
-    if (process.env.NODE_ENV !== 'production') {
+  if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASS) {
+    if (env.NODE_ENV !== 'production') {
       console.log(`Password reset link for ${to}: ${resetUrl}`);
       return { skipped: true };
     }
@@ -15,14 +14,14 @@ export const sendPasswordResetEmail = async ({ to, resetUrl }) => {
   }
 
   const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: Number(SMTP_PORT || 587),
-    secure: Number(SMTP_PORT) === 465,
-    auth: { user: SMTP_USER, pass: SMTP_PASS }
+    host: env.SMTP_HOST,
+    port: env.SMTP_PORT,
+    secure: env.SMTP_PORT === 465,
+    auth: { user: env.SMTP_USER, pass: env.SMTP_PASS }
   });
 
   await transporter.sendMail({
-    from: SMTP_FROM || 'Team Task Manager <no-reply@example.com>',
+    from: env.SMTP_FROM,
     to,
     subject: 'Reset your Team Task Manager password',
     html: `

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { env } from '../config/env.js';
 import { User } from '../models/User.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 
@@ -13,7 +14,7 @@ export const protect = asyncHandler(async (req, _res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, env.JWT_SECRET);
     const user = await User.findById(decoded.id);
     if (!user) {
       const error = new Error('User no longer exists');

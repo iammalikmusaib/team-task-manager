@@ -1,3 +1,5 @@
+import { env } from '../config/env.js';
+
 export const notFound = (req, _res, next) => {
   const error = new Error(`Route not found: ${req.originalUrl}`);
   error.statusCode = 404;
@@ -25,6 +27,6 @@ export const errorHandler = (err, _req, res, _next) => {
 
   return res.status(statusCode).json({
     message: err.message || 'Server error',
-    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack
+    stack: env.NODE_ENV === 'production' ? undefined : err.stack
   });
 };

@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { env } from '../config/env.js';
 import { User } from '../models/User.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendPasswordResetEmail } from '../utils/email.js';
@@ -86,13 +87,18 @@ export const forgotPassword = asyncHandler(async (req, res) => {
   const token = user.createPasswordResetToken();
   await user.save({ validateBeforeSave: false });
 
-  const clientUrl = (process.env.CLIENT_URL || 'http://localhost:5173').split(',')[0];
+  if (!env.PUBLIC_APP_URL) {
+    res.status(500);
+    throw new Error('PUBLIC_APP_URL or CLIENT_URL is required for password reset links');
+  }
+
+  const clientUrl = env.PUBLIC_APP_URL.split(',')[0];
   const resetUrl = `${clientUrl}/reset-password/${token}`;
   await sendPasswordResetEmail({ to: user.email, resetUrl });
 
   return res.json({
     message: 'If that email exists, a reset link has been sent',
-    resetUrl: process.env.NODE_ENV !== 'production' ? resetUrl : undefined
+    resetUrl: env.NODE_ENV !== 'production' ? resetUrl : undefined
   });
 });
 

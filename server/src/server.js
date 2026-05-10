@@ -1,11 +1,9 @@
-import dotenv from 'dotenv';
 import { app } from './app.js';
+import { env } from './config/env.js';
 import { connectDB } from './config/db.js';
 
-dotenv.config();
-
-const DEFAULT_PORT = Number(process.env.PORT || 5000);
-const MAX_PORT_ATTEMPTS = process.env.NODE_ENV === 'production' ? 1 : 10;
+const DEFAULT_PORT = env.PORT;
+const MAX_PORT_ATTEMPTS = env.NODE_ENV === 'production' ? 1 : 10;
 
 const listen = (port, attemptsLeft = MAX_PORT_ATTEMPTS) => {
   const server = app.listen(port, () => {

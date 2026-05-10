@@ -79,10 +79,11 @@ Update `server/.env`:
 ```env
 NODE_ENV=development
 PORT=5000
-MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/team-task-manager?retryWrites=true&w=majority
-JWT_SECRET=replace-with-a-long-random-secret
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_long_random_jwt_secret
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
+PUBLIC_APP_URL=http://localhost:5173
 SMTP_HOST=
 SMTP_PORT=587
 SMTP_USER=
@@ -101,6 +102,8 @@ Update `client/.env`:
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
+
+`client/.env` is only needed for local Vite development. In Railway single-service deployment, the frontend uses `/api` from the same domain.
 
 4. Optional seed data:
 
@@ -169,10 +172,11 @@ This app is configured as one Railway service from the repository root. Express 
 
 ```env
 NODE_ENV=production
-MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/team-task-manager?retryWrites=true&w=majority
-JWT_SECRET=replace-with-a-long-random-secret
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_long_random_jwt_secret
 JWT_EXPIRES_IN=7d
 CLIENT_URL=https://your-railway-domain.up.railway.app
+PUBLIC_APP_URL=https://your-railway-domain.up.railway.app
 ```
 
 Optional SMTP variables:
