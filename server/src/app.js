@@ -16,15 +16,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const app = express();
-const allowedOrigins = env.CLIENT_URL
+const allowedOrigins = [env.CLIENT_URL, env.PUBLIC_APP_URL]
+  .filter(Boolean)
+  .join(',')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const isLocalOrigin = (origin) => /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+      if (!origin || allowedOrigins.includes(origin) || (env.NODE_ENV !== 'production' && isLocalOrigin(origin))) {
+        return callback(null, true);
+      }
       return callback(new Error('Not allowed by CORS'));
     },
     credentials: true
